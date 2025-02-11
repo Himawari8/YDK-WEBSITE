@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory</title>
+    <style>
+        .sortable {
+            cursor: pointer;
+            background-color: #f1f1f1;
+        }
+
+        .sortable:hover {
+            background-color: #ddd;
+        }
+
+        .sort-asc::after {
+            content: " ▲";
+        }
+
+        .sort-desc::after {
+            content: " ▼";
+        }
+    </style>
+</head>
+<body>
+    <h1>Inventory</h1>
+    <h2>The admin will view the inventory and have options to add, delete, or edit products</h2>
+    <h2>
+        <a href="/add-product">Add Product</a>
+    </h2>
+
+    <table border="2" id="productTable">
+        <thead>
+            <tr>
+                <th class="sortable" onclick="sortTable(0)">Name</th>
+                <th class="sortable" onclick="sortTable(1)">Category</th>
+                <th class="sortable" onclick="sortTable(2)">Quantity</th>
+                <th class="sortable" onclick="sortTable(3)">Reorder Level</th>
+                <th class="sortable" onclick="sortTable(4)">Supplier</th>
+                <th class="sortable" onclick="sortTable(5)">Purchase Price</th>
+                <th class="sortable" onclick="sortTable(6)">Selling Price</th>
+                <th class="sortable" onclick="sortTable(7)">Status</th>
+                <th class="sortable" onclick="sortTable(8)">Description</th>
+                <th class="sortable" onclick="sortTable(9)">Product Id</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% let totalquantity = 0; %>
+            <% products.forEach(product => { %>
+                <% totalquantity += Number(product.quantity); %>
+                <tr>
+                    <td><a href="/product-details?prodId=<%= product.prodId %>"><%= product.name %></a></td>
+                    <td><%= product.category %></td>
+                    <td><%= product.quantity %></td>
+                    <td><%= product.reorderLevel %></td>
+                    <td><%= product.supplier %></td>
+                    <td><%= product.purchasePrice %></td>
+                    <td><%= product.sellingPrice %></td>
+                    <td><%= product.status %></td>
+                    <td><%= product.description %></td>
+                    <td><%= product.prodId %></td>
+                    <td>
+                        <form action="/delete-Product" method="POST" style="display: inline;">
+                            <input type="hidden" name="prodId" value="<%= product.prodId %>">
+                            <button type="submit">Delete</button>
+                        </form>
+                        <form action="/edit-Product" method="POST" style="display: inline;">
+                            <input type="hidden" name="prodId" value="<%= product.prodId %>">
+                            <button type="submit">Edit</button>
+                        </form>
+                    </td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+    
+    <h3>Total Quantity: <%= totalquantity %></h3>
+
+    <script>
+        let sortDirection = {}; // Track sorting direction per column
+
+        function sortTable(columnIndex) {
+            let table = document.getElementById("productTable");
+            let rows = Array.from(table.rows).slice(1); // Exclude header row
+            let isAscending = sortDirection[columnIndex] = !sortDirection[columnIndex]; // Toggle sort order
+
+            rows.sort((rowA, rowB) => {
+                let cellA = rowA.cells[columnIndex].innerText.trim();
+                let cellB = rowB.cells[columnIndex].innerText.trim();
+
+                let numA = parseFloat(cellA);
+                let numB = parseFloat(cellB);
+
+                if (!isNaN(numA) && !isNaN(numB)) {
+                    return isAscending ? numA - numB : numB - numA;
+                } else {
+                    return isAscending ? cellA.localeCompare(cellB) : cellB.localeCompare(cellA);
+                }
+            });
+
+            rows.forEach(row => table.appendChild(row));
+
+            updateHeaderStyles(columnIndex, isAscending);
+        }
+
+        function updateHeaderStyles(columnIndex, isAscending) {
+            document.querySelectorAll(".sortable").forEach((header, index) => {
+                header.classList.remove("sort-asc", "sort-desc");
+                if (index === columnIndex) {
+                    header.classList.add(isAscending ? "sort-asc" : "sort-desc");
+                }
+            });
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Product</title>
+</head>
+<body>
+    <h1>The admin will add product here.</h1>
+
+    <form action="/add-product" method="post">
+        <!-- Product ID -->
+        <label for="productId">Product ID</label>
+        <input type="hidden" id="productId" name="productId" value="<%= product ? product.prodId : '' %>" required>
+        <br>
+        
+        <!-- Product Name -->
+        <label for="productName">Product Name</label>
+        <input type="text" id="productName" name="productName" value="<%= product ? product.name : '' %>" required>
+        <br>
+        
+        <!-- Category -->
+        <label for="productCategory">Category</label>
+        <select id="productCategory" name="productCategory" required>
+            <option value="swine" <%= product && product.category === 'swine' ? 'selected' : '' %>>Swine</option>
+            <option value="poultry" <%= product && product.category === 'poultry' ? 'selected' : '' %>>Poultry</option>
+            <option value="fishFood" <%= product && product.category === 'fishFood' ? 'selected' : '' %>>Fish Food</option>
+        </select>
+        <br>
+        
+        <!-- Product Quantity -->
+        <label for="productQuantity">Product Quantity</label>
+        <input type="number" id="productQuantity" name="productQuantity" min="1" value="<%= product ? product.quantity : '' %>" required>
+        <br>
+        
+        <!-- Reorder Level -->
+        <label for="reorderLevel">Reorder Level</label>
+        <input type="number" id="reorderLevel" name="reorderLevel" min="1" value="<%= product ? product.reorderLevel : '' %>" required>
+        <br>
+        
+        <!-- Supplier -->
+        <label for="supplier">Supplier</label>
+        <input type="text" id="supplier" name="supplier" value="<%= product ? product.supplier : '' %>" required>
+        <br>
+        
+        <!-- Purchase Price -->
+        <label for="purchasePrice">Purchase Price</label>
+        <input type="number" id="purchasePrice" name="purchasePrice" step="0.01" min="0" value="<%= product ? product.purchasePrice : '' %>" required>
+        <br>
+        
+        <!-- Selling Price -->
+        <label for="sellingPrice">Selling Price</label>
+        <input type="number" id="sellingPrice" name="sellingPrice" step="0.01" min="0" value="<%= product ? product.sellingPrice : '' %>" required>
+        <br>
+        
+        <!-- Status -->
+        <label for="status">Category</label>
+        <select id="status" name="status" required>
+            <option value="High Stock" <%= product && product.status === 'High Stock' ? 'selected' : '' %>>High Stock</option>
+            <option value="Low Stock" <%= product && product.status === 'Low Stock' ? 'selected' : '' %>>Low Stock</option>
+        </select>
+        <br>
+
+        <!-- Product Description -->
+        <label for="productDescription">Product Description</label>
+        <textarea id="productDescription" name="productDescription" rows="4" required><%= product ? product.description : '' %></textarea>
+        <br>
+        
+        <button type="submit"><%= product ? 'Save Changes' : 'Add Product' %></button>
+    </form>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Details</title>
+</head>
+<body>
+    <h1>Order Details</h1>
+    
+    <p><strong>Order ID:</strong> <%= order.orderId %></p>
+    <p><strong>Customer Name:</strong> <%= order.customerName %></p>
+    <p><strong>Contact Number:</strong> <%= order.contactNumber %></p>
+    <p><strong>Address:</strong> <%= order.address %></p>
+    <p><strong>Date of Sale:</strong> <%= order.dateOfSale %></p>
+    <p><strong>Delivery Method:</strong> <%= order.deliveryMethod %></p>
+    <p><strong>Order Total Amount:</strong> ₱<%= order.orderTotalAmount %></p>
+    <p><strong>Discounts:</strong> (%) <%= order.discounts %></p>
+    <p><strong>Paid Status:</strong> <%= order.paid %></p>
+    <p><strong>Status:</strong> <%= order.status %></p>
+    <p><strong>Total Quantity:</strong> <%= order.totalQuantity %></p>
+    
+    <h2>Selected Products</h2>
+    <ul>
+        <% order.selectedProducts.forEach(product => { %>
+            <li>
+                <strong>Product Name:</strong> <%= product.productName %> <br>
+                <strong>Quantity:</strong> <%= product.quantity %> <br>
+                <strong>Selling Price:</strong> ₱<%= product.sellingPrice %> <br>
+                <strong>Total Price:</strong> ₱<%= product.totalPrice %>
+            </li>
+        <% }) %>
+    </ul>
+</body>
+</html>

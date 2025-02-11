@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sell Product</title>
+</head>
+<body>
+    <h1>This page is the POS of the admin for the orders.</h1>
+
+    <!-- Searchable Product Selection -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+    
+    <!-- Product Selection -->
+    <label for="productName">Product Name</label>
+    <select id="productName" name="productName" required onchange="updateSellingPrice()" class="searchable-dropdown">
+        <option value="">Select a product</option>
+        <% products.forEach(product => { %>
+            <option value="<%= product.name %>" data-price="<%= product.sellingPrice %>" 
+                data-prodId="<%= product.prodId %>" 
+                data-productQuantity="<%= product.quantity %>">
+                <%= product.name %>
+            </option>
+        <% }); %>
+    </select>
+    <br><br>
+
+    <!-- Quantity -->
+    <label for="quantity">Quantity</label>
+    <input type="number" id="quantity" name="quantity" min="1" >
+    <p id="quantityError" style="color: red;"></p>
+    <br><br>
+
+    <!-- Selling Price -->
+    <label for="sellingPrice">Selling Price</label>
+    <input type="number" id="sellingPrice" name="sellingPrice" step="0.01" >
+    <br><br>
+
+    <!-- Total Amount (Calculated) -->
+    <label for="totalAmount">Total Amount</label>
+    <input type="number" id="totalAmount" name="totalAmount" step="0.01" readonly>
+    <br><br>
+
+    <button id="buttonAdd">Add</button>
+
+    <form action="/sell" method="POST">
+        <h2>Sale Form</h2>
+
+        <h3>Selected Products</h3>
+        <ul id="productList"></ul>
+        
+        <input type="hidden" id="selectedProducts" name="selectedProducts">
+
+
+         <!-- Discounts -->
+         <label for="discounts">Discounts (%)</label>
+         <input type="number" id="discounts" name="discounts" step="0.01" min="0" value="0" >
+         <br><br>  
+         
+         <!-- Total Quantity -->
+         <label for="totalQuantity">Total Quantity</label>
+         <input type="number" id="totalQuantity" name="totalQuantity" step="0.01" min="0" value="0" readonly>
+         <br><br>  
+
+        <!-- Order Total Amount (Calculated) -->
+        <label for="orderTotalAmount">Order Total Amount</label>
+        <input type="number" id="orderTotalAmount" name="orderTotalAmount" step="0.01" readonly>
+        <br><br>
+
+        <hr>
+
+        <!-- Date of Sale -->
+        <label for="dateOfSale">Date of Sale</label>
+        <input type="date" id="dateOfSale" name="dateOfSale" required>
+        <br><br>
+
+    
+        <!-- Pick up or Deliver -->
+        <label for="deliveryMethod">Delivery Method</label>
+        <select id="deliveryMethod" name="deliveryMethod" required>
+            <option value="pickUp">Pick Up</option>
+            <option value="deliver">Deliver</option>
+        </select>
+        <br><br>
+    
+        <!-- Customer Information -->
+        <label for="customerName">Customer Name</label>
+        <input type="text" id="customerName" name="customerName" required>
+        <br><br>
+    
+        <!-- Conditional Delivery Information -->
+        <div id="deliveryDetails" style="display: none;">
+            <label for="address">Address (Required if Deliver)</label>
+            <input type="text" id="address" name="address">
+            <br><br>
+    
+            <label for="contactNumber">Contact Number (Required if Deliver)</label>
+            <input type="text" id="contactNumber" name="contactNumber">
+            <br><br>
+        </div>
+    
+        <!-- Payment Status -->
+        <label>Payment Status</label>
+        <label for="paidYes">Paid</label>
+        <input type="radio" id="paidYes" name="paid" value="paid" required>
+        <label for="paidNo">Unpaid</label>
+        <input type="radio" id="paidNo" name="paid" value="unpaid">
+        <label for="paidPartial">Partial</label>
+        <input type="radio" id="paidPartial" name="paid" value="partial">
+        <br><br>
+
+        <!-- Notes -->
+        <label for="notes">Notes</label>
+        <input type="text" id="notes" name="notes">
+        <br><br>
+    
+        <button type="submit">Complete Sale</button>
+    </form>
+
+</body>
+</html>
+
+
+<script>
+        let totalOrderAmount = 0; // Store total amount
+        let totalOrderQuantity = 0;
+        let selectedProducts = [];
+
+        document.getElementById("productName").addEventListener("change", function() {
+        var selectedOption = this.options[this.selectedIndex];
+        var maxQuantity = selectedOption.getAttribute("data-productQuantity");
+
+        var quantityInput = document.getElementById("quantity");
+        quantityInput.max = maxQuantity; // Set max value
+        quantityInput.value = ""; // Clear previous value if out of range
+        document.getElementById("quantityError").textContent = ""; // Clear previous error
+         });
+
+        document.getElementById("quantity").addEventListener("input", function() {
+        var maxQuantity = this.max;
+        if (this.value > maxQuantity) {
+            document.getElementById("quantityError").textContent = "Quantity exceeds available stock (" + maxQuantity + ").";
+            this.value = maxQuantity; // Auto-correct to max
+        } else {
+            document.getElementById("quantityError").textContent = "";
+        }
+        });
+
+        document.getElementById("buttonAdd").addEventListener("click", function () {
+            const productName = document.getElementById("productName").value;
+            const quantity = parseInt(document.getElementById("quantity").value);
+            const sellingPrice = parseFloat(document.getElementById("sellingPrice").value);
+            const selectElement = document.getElementById("productName");
+            const selectedOption = selectElement.options[selectElement.selectedIndex];
+            const productId = selectedOption.getAttribute("data-prodId");
+            const productQuantity = selectedOption.getAttribute("data-productQuantity");
+
+
+            if (!productName || !quantity || isNaN(sellingPrice)) {
+                alert("Please fill in all required fields.");
+                return;
+            }
+
+            // Calculate total price
+            const totalPrice = sellingPrice * quantity;
+            const product = { productName, quantity, sellingPrice, totalPrice, productId, productQuantity };
+
+            selectedProducts.push(product);
+            document.getElementById("selectedProducts").value = JSON.stringify(selectedProducts);
+
+            totalOrderAmount += totalPrice; // Add to total order amount
+            totalOrderQuantity += quantity; // Add to total order quantity
+
+            // Create list item
+            const productList = document.getElementById("productList");
+            const listItem = document.createElement("li");
+
+            listItem.innerHTML = `
+                <strong>${productName}</strong> - ${quantity} pcs - Total: PHP ${totalPrice.toFixed(2)} - Product ID: ${productId}
+                <button class="remove-btn">Remove</button>
+            `;
+
+            productList.appendChild(listItem);
+
+            // Update total order amount
+            document.getElementById("orderTotalAmount").value = totalOrderAmount.toFixed(2);
+            document.getElementById("totalQuantity").value = totalOrderQuantity;
+
+            // Add event listener to remove button
+            listItem.querySelector(".remove-btn").addEventListener("click", function () {
+                // Subtract the removed item's total from totalOrderAmount
+                totalOrderAmount -= totalPrice;
+                totalOrderQuantity -= quantity;
+
+                // Update the total order amount display
+                document.getElementById("orderTotalAmount").value = totalOrderAmount.toFixed(2);
+                document.getElementById("totalQuantity").value = totalOrderQuantity;
+
+                // Remove the item from the selectedProducts array
+                selectedProducts = selectedProducts.filter(p => !(p.productName === productName && p.quantity === quantity && p.sellingPrice === sellingPrice
+                                                                 && p.productId === productId && p.productQuantity === productQuantity));
+
+                // Update the hidden input field
+                document.getElementById("selectedProducts").value = JSON.stringify(selectedProducts);
+
+                // Remove the item from the list
+                productList.removeChild(listItem);
+            });
+
+            // Clear inputs after adding
+            document.getElementById("quantity").value = "";
+            document.getElementById("sellingPrice").value = "";
+            document.getElementById("discounts").value = "0";
+            document.getElementById("totalAmount").value = "";
+            document.getElementById("productName").value = "";
+        });
+
+
+        function updateSellingPrice() {
+        var productDropdown = document.getElementById("productName");
+        var sellingPriceInput = document.getElementById("sellingPrice");
+        var quantityInput = document.getElementById("quantity");
+        var errorText = document.getElementById("quantityError");
+
+        var selectedOption = productDropdown.options[productDropdown.selectedIndex];
+        var price = selectedOption.getAttribute("data-price");
+        var maxQuantity = selectedOption.getAttribute("data-productQuantity");
+
+        // Update selling price
+        sellingPriceInput.value = price || "";
+
+        // Set max quantity and reset input
+        if (maxQuantity) {
+            quantityInput.max = maxQuantity;
+            quantityInput.value = ""; // Reset quantity field when selecting a new product
+            errorText.textContent = ""; // Clear error message
+        }
+
+        // Recalculate total when selling price is updated
+        calculateTotalAmount();
+    }
+
+    // Validate quantity input dynamically
+    document.getElementById("quantity").addEventListener("input", function() {
+        var maxQuantity = parseInt(this.max, 10);
+        var currentValue = parseInt(this.value, 10);
+
+        if (currentValue > maxQuantity) {
+            document.getElementById("quantityError").textContent = "Quantity exceeds available stock (" + maxQuantity + ").";
+            this.value = maxQuantity; // Auto-correct to max
+        } else {
+            document.getElementById("quantityError").textContent = "";
+        }
+    });
+
+
+    function calculateTotalAmount() {
+        var quantity = parseFloat(document.getElementById("quantity").value) || 0;
+        var sellingPrice = parseFloat(document.getElementById("sellingPrice").value) || 0;
+
+        var total = quantity * sellingPrice;
+
+        document.getElementById("totalAmount").value = total.toFixed(2);
+    }
+
+    function calculateOrderTotalAmount() {
+        var discount = parseFloat(document.getElementById("discounts").value) || 0;
+
+        var totalAfterDiscount = totalOrderAmount - (totalOrderAmount * (discount / 100));
+
+        document.getElementById("orderTotalAmount").value = totalAfterDiscount.toFixed(2);
+    }
+
+    // Add event listeners to trigger total calculation
+    document.getElementById("quantity").addEventListener("input", calculateTotalAmount);
+    document.getElementById("sellingPrice").addEventListener("input", calculateTotalAmount);
+    document.getElementById("discounts").addEventListener("input", calculateOrderTotalAmount);
+
+    document.getElementById("deliveryMethod").addEventListener("change", function() {
+        var deliveryDetails = document.getElementById("deliveryDetails");
+        var addressInput = document.getElementById("address");
+        var contactNumberInput = document.getElementById("contactNumber");
+
+        if (this.value === "deliver") {
+            deliveryDetails.style.display = "block";
+            addressInput.setAttribute("required", "required");
+            contactNumberInput.setAttribute("required", "required");
+        } else {
+            deliveryDetails.style.display = "none";
+            addressInput.removeAttribute("required");
+            contactNumberInput.removeAttribute("required");
+        }
+    });
+
+    function updateProductDetails() {
+        var select = document.getElementById("productName");
+        var quantityInput = document.getElementById("quantity");
+
+        // Get selected option
+        var selectedOption = select.options[select.selectedIndex];
+
+        // Get the maximum quantity from the selected product
+        var maxQuantity = selectedOption.getAttribute("data-productQuantity");
+
+        // Set max attribute for the quantity input
+        quantityInput.max = maxQuantity;
+        quantityInput.value = ""; // Reset input if a new product is selected
+    }
+
+    $(document).ready(function() {
+        $('.searchable-dropdown').select2({
+            placeholder: "Select a product",
+            allowClear: true
+        });
+    });
+</script>

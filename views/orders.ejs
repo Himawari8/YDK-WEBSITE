@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orders</title>
+</head>
+<body>
+    <h1>This will display the orders</h1>
+
+    <table border="1" cellspacing="0" cellpadding="8">
+        <thead>
+            <tr>
+                <th>Order Id</th>
+                <th>Selected Products</th>
+                <th>Discounts (%)</th>
+                <th>Total Quantity</th>
+                <th>Order Total Amount</th>
+                <th>Date of Sale</th>
+                <th>Delivery Method</th>
+                <th>Customer Name</th>
+                <th>Address</th>
+                <th>Contact Number</th>
+                <th>Paid</th>
+                <th>Notes</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% orders.forEach(order => { %>
+                <tr>
+                    <td><a href="/order-details?orderId=<%= order.orderId %>"><%= order.orderId %></a></td>
+                    <td>
+                        <table border="1" cellspacing="0" cellpadding="5">
+                            <thead>
+                                <tr>
+                                    <th>Product Name</th>
+                                    <th>Quantity</th>
+                                    <th>Selling Price</th>
+                                    <th>Total Price</th>
+                                    <th>Product ID</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% order.selectedProducts.forEach(product => { %>
+                                    <tr>
+                                        <td><%= product.productName %></td>
+                                        <td><%= product.quantity %></td>
+                                        <td><%= product.sellingPrice %></td>
+                                        <td><%= product.totalPrice %></td>
+                                        <td><%= product.productId %></td>
+                                    </tr>
+                                <% }) %>
+                            </tbody>
+                        </table>
+                    </td>
+                    <td><%= order.discounts %></td>
+                    <td><%= order.totalQuantity %></td>
+                    <td><%= order.orderTotalAmount %></td>
+                    <td><%= order.dateOfSale %></td>
+                    <td><%= order.deliveryMethod %></td>
+                    <td><%= order.customerName %></td>
+                    <td><%= order.address %></td>
+                    <td><%= order.contactNumber %></td>
+                    <td><%= order.paid %></td>
+                    <td><%= order.notes %></td>
+                    <td><%= order.status %></td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+    
+    
+    
+    
+</body>
+</html>

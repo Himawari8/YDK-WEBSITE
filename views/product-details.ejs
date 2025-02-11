@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details</title>
+</head>
+<body>
+    <h1>This shows the details of the product</h1>
+
+        <!-- Product Name -->
+    <label>Product Name:</label>
+    <p><%= product ? product.name : 'N/A' %></p>
+    <br>
+
+    <!-- Product Quantity -->
+    <label>Product Quantity:</label>
+    <p><%= product ? product.quantity : 'N/A' %></p>
+    <br>
+
+    <!-- Product Price -->
+    <label>Product Price:</label>
+    <p><%= product ? product.price : 'N/A' %></p>
+    <br>
+
+    <!-- Product Image -->
+    <label>Product Image:</label>
+    <% if (product && product.imageUrl) { %>
+        <img src="<%= product.imageUrl %>" alt="Product Image" width="150">
+    <% } else { %>
+        <p>No image available</p>
+    <% } %>
+    <br>
+
+    <!-- Product Description -->
+    <label>Product Description:</label>
+    <p><%= product ? product.description : 'N/A' %></p>
+    <br>
+
+    <!-- Hidden Product ID -->
+    <input type="hidden" id="productId" name="productId" value="<%= product ? product.prodId : null %>">
+
+</body>
+</html>
