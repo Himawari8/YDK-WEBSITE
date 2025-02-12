@@ -4,26 +4,69 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Orders</title>
+    <style>
+        .sortable {
+            cursor: pointer;
+            background-color: #f1f1f1;
+        }
+
+        .sortable:hover {
+            background-color: #ddd;
+        }
+
+        .sort-asc::after {
+            content: " ▲";
+        }
+
+        .sort-desc::after {
+            content: " ▼";
+        }
+    </style>
 </head>
 <body>
     <h1>This will display the orders</h1>
 
-    <table border="1" cellspacing="0" cellpadding="8">
+    
+    <!-- Filter Section -->
+    <label for="dateFilter">Date of Sale:</label>
+    <select id="dateFilter" onchange="filterTable()">
+        <option value="">All</option>
+    </select>
+
+    <label for="deliveryFilter">Delivery Method:</label>
+    <select id="deliveryFilter" onchange="filterTable()">
+        <option value="">All</option>
+    </select>
+
+    <label for="paidFilter">Paid:</label>
+    <select id="paidFilter" onchange="filterTable()">
+        <option value="">All</option>
+    </select>
+
+    <label for="statusFilter">Status:</label>
+    <select id="statusFilter" onchange="filterTable()">
+        <option value="">All</option>
+    </select>
+
+    <button onclick="resetFilters()">Reset</button>
+
+    
+    <table border="1" cellspacing="0" cellpadding="8" id="ordersTable">
         <thead>
             <tr>
-                <th>Order Id</th>
+                <th class="sortable" onclick="sortTable(0)">Order Id</th>
                 <th>Selected Products</th>
-                <th>Discounts (%)</th>
-                <th>Total Quantity</th>
-                <th>Order Total Amount</th>
-                <th>Date of Sale</th>
-                <th>Delivery Method</th>
-                <th>Customer Name</th>
-                <th>Address</th>
-                <th>Contact Number</th>
-                <th>Paid</th>
+                <th class="sortable" onclick="sortTable(2)">Discounts (%)</th>
+                <th class="sortable" onclick="sortTable(3)">Total Quantity</th>
+                <th class="sortable" onclick="sortTable(4)">Order Total Amount</th>
+                <th class="sortable" onclick="sortTable(5)">Date of Sale</th>
+                <th class="sortable" onclick="sortTable(6)">Delivery Method</th>
+                <th class="sortable" onclick="sortTable(7)">Customer Name</th>
+                <th class="sortable" onclick="sortTable(8)">Address</th>
+                <th class="sortable" onclick="sortTable(9)">Contact Number</th>
+                <th class="sortable" onclick="sortTable(10)">Paid</th>
                 <th>Notes</th>
-                <th>Status</th>
+                <th class="sortable" onclick="sortTable(12)">Status</th>
             </tr>
         </thead>
         <tbody>
@@ -42,15 +85,16 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <% order.selectedProducts.forEach(product => { %>
-                                    <tr>
-                                        <td><%= product.productName %></td>
-                                        <td><%= product.quantity %></td>
-                                        <td><%= product.sellingPrice %></td>
-                                        <td><%= product.totalPrice %></td>
-                                        <td><%= product.productId %></td>
-                                    </tr>
-                                <% }) %>
+                                <% if (Array.isArray(order.selectedProducts)) { %>
+                                    <%  order.selectedProducts.forEach(product => { %>
+                                        <tr>
+                                            <td><%= product.productName %></td>
+                                            <td><%= product.quantity %></td>
+                                            <td><%= product.sellingPrice %></td>
+                                            <td><%= product.totalPrice %></td>
+                                            <td><%= product.productId %></td>
+                                        </tr>
+                                <% }) } %>
                             </tbody>
                         </table>
                     </td>
@@ -68,10 +112,120 @@
                 </tr>
             <% }) %>
         </tbody>
+        
     </table>
+
+    <script>
+        let sortDirection = {};
     
+        function sortTable(columnIndex) {
+            let table = document.getElementById("ordersTable");
+            let rows = Array.from(table.getElementsByTagName("tbody")[0].rows);
+            let headers = table.getElementsByTagName("th");
+            
+            // Adjust index for correct sorting (accounting for the nested table)
+            let adjustedIndex = [...headers].filter(th => th.classList.contains("sortable")).indexOf(headers[columnIndex]);
     
+            let isAscending = sortDirection[adjustedIndex] = !sortDirection[adjustedIndex];
     
+            rows.sort((rowA, rowB) => {
+                let cellA = rowA.cells[columnIndex].innerText.trim();
+                let cellB = rowB.cells[columnIndex].innerText.trim();
+    
+                let numA = parseFloat(cellA);
+                let numB = parseFloat(cellB);
+    
+                if (!isNaN(numA) && !isNaN(numB)) {
+                    return isAscending ? numA - numB : numB - numA;
+                } else {
+                    return isAscending ? cellA.localeCompare(cellB) : cellB.localeCompare(cellA);
+                }
+            });
+    
+            rows.forEach(row => table.getElementsByTagName("tbody")[0].appendChild(row));
+    
+            updateHeaderStyles(adjustedIndex, isAscending);
+        }
+    
+        function updateHeaderStyles(columnIndex, isAscending) {
+            document.querySelectorAll(".sortable").forEach((header, index) => {
+                header.classList.remove("sort-asc", "sort-desc");
+                if (index === columnIndex) {
+                    header.classList.add(isAscending ? "sort-asc" : "sort-desc");
+                }
+            });
+        }
+
+        function filterTable() {
+    let dateFilter = document.getElementById("dateFilter").value.toLowerCase();
+    let deliveryFilter = document.getElementById("deliveryFilter").value.toLowerCase();
+    let paidFilter = document.getElementById("paidFilter").value.toLowerCase();
+    let statusFilter = document.getElementById("statusFilter").value.toLowerCase();
+    let rows = document.querySelectorAll("#ordersTable tbody > tr"); // Get only direct tr elements
+
+    rows.forEach(row => {
+        let cells = row.children;
+        if (cells.length < 13) return; // Skip invalid rows
+
+        let date = cells[5]?.innerText.trim().toLowerCase() || "";
+        let delivery = cells[6]?.innerText.trim().toLowerCase() || "";
+        let paid = cells[10]?.innerText.trim().toLowerCase() || "";
+        let status = cells[12]?.innerText.trim().toLowerCase() || "";
+
+        let dateMatch = dateFilter === "" || date.includes(dateFilter);
+        let deliveryMatch = deliveryFilter === "" || delivery.includes(deliveryFilter);
+        let paidMatch = paidFilter === "" || paid.includes(paidFilter);
+        let statusMatch = statusFilter === "" || status.includes(statusFilter);
+
+        row.style.display = dateMatch && deliveryMatch && paidMatch && statusMatch ? "" : "none";
+    });
+}
+
+
+
+        function resetFilters() {
+            document.getElementById("dateFilter").value = "";
+            document.getElementById("deliveryFilter").value = "";
+            document.getElementById("paidFilter").value = "";
+            document.getElementById("statusFilter").value = "";
+            filterTable();
+        }
+
+        function populateDropdowns() {
+            let dates = new Set();
+            let deliveries = new Set();
+            let paidStatuses = new Set();
+            let statuses = new Set();
+
+            document.querySelectorAll("#ordersTable tbody tr").forEach(row => {
+                let cells = row.children; // Get all direct td elements
+                if (cells.length < 13) return; // Ignore invalid rows (possibly from nested tables)
+
+                dates.add(cells[5].innerText.trim());
+                deliveries.add(cells[6].innerText.trim());
+                paidStatuses.add(cells[10].innerText.trim());
+                statuses.add(cells[12].innerText.trim());
+            });
+
+            function addOptions(selectId, values) {
+                let select = document.getElementById(selectId);
+                values.forEach(value => {
+                    let option = document.createElement("option");
+                    option.value = value;
+                    option.textContent = value;
+                    select.appendChild(option);
+                });
+            }
+
+            addOptions("dateFilter", dates);
+            addOptions("deliveryFilter", deliveries);
+            addOptions("paidFilter", paidStatuses);
+            addOptions("statusFilter", statuses);
+        }
+
+
+        document.addEventListener("DOMContentLoaded", populateDropdowns);
+    </script>
     
 </body>
 </html>
