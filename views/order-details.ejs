@@ -16,9 +16,46 @@
     <p><strong>Delivery Method:</strong> <%= order.deliveryMethod %></p>
     <p><strong>Order Total Amount:</strong> ₱<%= order.orderTotalAmount %></p>
     <p><strong>Discounts:</strong> (%) <%= order.discounts %></p>
-    <p><strong>Paid Status:</strong> <%= order.paid %></p>
-    <p><strong>Status:</strong> <%= order.status %></p>
     <p><strong>Total Quantity:</strong> <%= order.totalQuantity %></p>
+
+    <hr>
+
+    <form action="/order-details" method="POST">
+        <input type="hidden" name="orderId" value="<%= order.orderId %>">
+        
+        <p><strong>Paid Status:</strong> 
+            <select name="paidStatus">
+                <option value="Paid" <%= order.paid === "Paid" ? "selected" : "" %>>Paid</option>
+                <option value="Unpaid" <%= order.paid === "Unpaid" ? "selected" : "" %>>Unpaid</option>
+                <option value="Partial" <%= order.paid === "Partial" ? "selected" : "" %>>Partial</option>
+            </select>
+        </p>
+    
+        <p><strong>Status:</strong> 
+            <select name="orderStatus" id="orderStatus">
+                <% if (order.deliveryMethod.toLowerCase() === "pickup") { %>
+                    <option value="Pending" <%= order.status === "Pending" ? "selected" : "" %>>Pending</option>
+                    <option value="Pick Upped" <%= order.status === "Pick Upped" ? "selected" : "" %>>Pick Upped</option>
+                <% } else if (order.deliveryMethod.toLowerCase() === "deliver") { %>
+                    <option value="Pending" <%= order.status === "Pending" ? "selected" : "" %>>Pending</option>
+                    <option value="Delivering" <%= order.status === "Delivering" ? "selected" : "" %>>Delivering</option>
+                    <option value="Delivered" <%= order.status === "Delivered" ? "selected" : "" %>>Delivered</option>
+                <% } %>
+            </select>
+        </p>
+
+        <button type="submit">Update Order</button>
+
+        <hr>
+
+    </form>
+
+    <% if (order.deliveryMethod.toLowerCase() === "deliver") { %>
+        <form action="/maps" method="post">
+            <input type="hidden" name="orderId" value="<%= order.orderId %>">
+            <button type="submit">Track</button>
+        </form>
+    <% } %>
     
     <h2>Selected Products</h2>
     <ul>

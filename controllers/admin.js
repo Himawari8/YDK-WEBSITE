@@ -12,7 +12,8 @@ exports.getMap = (req, res, next) => {
 };
 
 exports.postMap = (req, res, next) => {
-    res.render('maps');
+    const orderId = req.body.orderId; // Retrieve orderId from the form
+    res.render('maps', { orderId: orderId }); // Pass orderId to the maps page
 };
 
 exports.getSell = (req, res, next) => {
@@ -232,8 +233,19 @@ exports.postOrders = (req, res, next) => {
 
 };
 
-exports.postEditOrder = (req, res, next) => {
+exports.postOrderUpdate = (req, res, next) => {
+    const orderId = req.body.orderId;
+    const paidStatus = req.body.paidStatus;
+    const status = req.body.orderStatus;
 
+    Order.updateOrder(orderId, paidStatus, status)
+        .then(result => {
+            res.redirect('orders');
+        })
+        .catch((error) => {
+            console.error('Error getting order details:', error);
+            res.status(500).send('Error getting order details');
+        });
 };
 
 exports.getOrderDetails = (req, res, next) => {

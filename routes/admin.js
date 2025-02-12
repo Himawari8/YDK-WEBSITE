@@ -28,7 +28,7 @@ router.post('/product-details', adminController.postEditProduct);
 
 router.get('/product-details', adminController.getProductDetails);
 
-router.post('/order-details', adminController.postEditOrder);
+router.post('/order-details', adminController.postOrderUpdate);
 
 router.get('/order-details', adminController.getOrderDetails);
 

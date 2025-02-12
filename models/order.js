@@ -99,6 +99,36 @@ class Order {
                 throw error;
             });
     }
+
+    static updateOrder(orderId, paidStatus, status) {
+        const ref = database.ref('orders');
+    
+        return ref.orderByChild('orderId').equalTo(orderId).once('value')
+            .then(snapshot => {
+                if (!snapshot.exists()) {
+                    throw new Error('Order not found');
+                }
+    
+                // Get the key of the order entry
+                const orderKey = Object.keys(snapshot.val())[0];
+    
+                // Update the order fields
+                return ref.child(orderKey).update({
+                    paid: paidStatus,
+                    status: status
+                });
+            })
+            .then(() => {
+                console.log('Order updated successfully');
+                return { success: true, message: 'Order updated successfully' };
+            })
+            .catch(error => {
+                console.error('Error updating order:', error.message);
+                return { success: false, message: error.message };
+            });
+    }
+    
+    
     
 }
 
