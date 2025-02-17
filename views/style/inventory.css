@@ -1,0 +1,295 @@
+body {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+  }
+  
+  h1 {
+    color: #3e5d92;
+    padding-left: 150px;
+  }
+  
+  a {
+    color: #3e5d92;
+    text-decoration: none;
+  }
+  
+  a:hover {
+    text-decoration: underline;
+  }
+  
+  h2 {
+    margin-top: 20px;
+    margin-left: 300px;
+    font-size: 20px;
+    font-weight: bold;
+  }
+  
+  .add {
+    flex-shrink: 0;
+    width: fit-content;
+    margin-top: 0;
+    position: relative;
+    left: 0;
+  }
+  
+  /* Align buttons side by side in the same line */
+  .container {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center; /* Ensures that both sections are aligned vertically */
+    column-gap: 5px; /* Added space between the buttons */
+    margin-top: 80px;
+    margin-left: 15%;
+    padding-bottom: 10px;
+    width: 70%;
+    height: 20%;
+    padding-top: 0;
+    margin-bottom: -20px;
+  }
+  
+  /* Ensures proper alignment of both buttons */
+  .add {
+    flex-shrink: 0;
+    margin-top: 0;
+    display: flex;
+    align-items: center;
+  }
+  
+  .add h2 a {
+    color: white;
+  }
+  .add h2 {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background-color: rgb(26, 255, 0);
+    border-radius: 5px;
+    padding: 6px 12px; /* Same padding as the reset button */
+    font-size: 14px; /* Same font size */
+    color: white;
+    font-weight: bold;
+    margin-left: 30px;
+  }
+  
+  /* Reset button consistent styling */
+  button {
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  
+  /* Filter section styling */
+  .filter-container {
+    display: flex;
+    gap: 10px; /* Decrease the gap between filter options */
+    align-items: center; /* Ensures filter options are centered vertically */
+    margin-bottom: 0;
+    margin-top: 20px;
+    flex-grow: 1; /* Allow filter section to take the remaining space */
+    width: auto; /* Adjust width to make it more flexible, or set a specific width */
+  }
+  
+  .filter-container label,
+  .filter-container select {
+    font-size: 10px;
+  }
+  
+  .filter-container select {
+    width: 200px;
+    padding: 5px;
+  }
+  
+  button[onclick="resetFilters()"] {
+    padding: 6px 12px;
+    font-size: 14px;
+    cursor: pointer;
+    background-color: #052548; /* Background color */
+    color: white; /* Text color */
+    border: none; /* Remove border */
+    border-radius: 5px; /* Rounded corners */
+    transition: background-color 0.3s ease; /* Smooth transition */
+  }
+  
+  button[onclick="resetFilters()"]:hover {
+    background-color: #0056b3; /* Darker color on hover */
+  }
+  
+  button {
+    padding: 6px 12px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  
+  /* Optional: Add some spacing for the reset button */
+  button {
+    margin-left: 10px;
+    margin-bottom: -5px;
+  }
+  
+  .blank-table {
+    width: 100%;
+    margin-top: 0.4rem;
+    margin-left: 200px;
+    background-color: #d3d3d350;
+    border-collapse: collapse;
+    width: fit-content;
+  }
+  
+  .blank-table thead {
+    background-color: #001f3d;
+    color: white;
+  }
+  
+  .blank-table thead tr:hover {
+    background-color: #001f3d;
+    cursor: pointer;
+  }
+  
+  .blank-table th,
+  .blank-table td {
+    padding: 10px 20px;
+    text-align: center;
+    border: 1px solid #ddd;
+  }
+  
+  .blank-table tr:hover {
+    background-color: #3e5d92;
+    cursor: pointer;
+  }
+  
+  .blank-table th {
+    padding: 15px 20px;
+  }
+  
+  .blank-table th:hover {
+    color: none;
+  }
+  
+  .blank-table td a {
+    color: #064584;
+  }
+  
+  .blank-table td a:hover {
+    color: #ffffff;
+  }
+  
+  Button {
+    background-color: transparent;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  .delete-button {
+    background-color: transparent;
+  }
+  
+  .delete-button:hover {
+    color: #d32f2f;
+  }
+  
+  .edit-button {
+    color: rgb(17, 253, 17);
+  }
+  
+  .edit-button:hover {
+    color: rgb(255, 255, 255);
+  }
+  
+  h3 {
+    margin-top: 20px;
+    margin-left: 150px;
+    font-size: 20px;
+    font-weight: bold;
+  }
+  
+  a {
+    color: #064584;
+    text-decoration: none;
+  }
+  
+  a:hover {
+    text-decoration: underline;
+  }
+  
+  .sidebar {
+    width: 100px;
+    background-color: #001f3d;
+    color: white;
+    padding-top: 60px;
+    margin-top: -30px;
+    margin-left: -30px;
+    position: fixed;
+    height: 100%;
+    width: 10%;
+  }
+  
+  .sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .sidebar ul li {
+    text-align: center;
+    padding: 20px 0;
+  }
+  
+  .sidebar ul li a {
+    text-decoration: none;
+    color: rgb(198, 196, 211);
+    display: block;
+    text-align: center;
+  }
+  
+  .sidebar ul li a i {
+    font-size: 30px;
+    display: block;
+    margin-bottom: 10px;
+  }
+  
+  .sidebar ul li a span {
+    display: block;
+    font-size: 14px; /* Adjust font size */
+    text-align: center; /* Center the text below the icon */
+  }
+  
+  /* Hover effect */
+  .sidebar ul li a:hover {
+    background-color: #022583;
+  }
+  
+  /* Highlighted Inventory item */
+  .sidebar ul li a.highlighted {
+    background-color: #ffffff;
+    color: #022583;
+  }
+  
+  /* #addButton {
+    background-color: rgb(2, 2, 76);
+    color: white;
+    border: none;
+    padding: 8.5px 15px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    cursor: pointer;
+    width: 100px;
+    border-radius: 5px;
+    margin-left: 150px;
+  }
+  
+  .add-item-section {
+    margin-top: 40px;
+    height: 30px;
+    display: flex;
+    flex-direction: row;
+    gap: 30px; /
+  }
+  
+  #addButton:hover {
+    background-color: rgb(2, 2, 76);
+  
+  } */

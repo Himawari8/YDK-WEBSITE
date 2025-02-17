@@ -2,58 +2,91 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="/style/inventory.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inventory</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+      integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    
     <style>
-        .sortable {
-            cursor: pointer;
-            background-color: #f1f1f1;
-        }
-
-        .sortable:hover {
-            background-color: #ddd;
-        }
-
-        .sort-asc::after {
-            content: " ▲";
-        }
-
-        .sort-desc::after {
-            content: " ▼";
-        }
+        
     </style>
 </head>
 <body>
-    <h1>Inventory</h1>
-    <h2>The admin will view the inventory and have options to add, delete, or edit products</h2>
-    <h2>
+    <div class="sidebar" id="sidebar">
+        <ul>
+          <li>
+            <a href="#" class="highlighted">
+              <i class="fas fa-box"></i><span>Inventory</span>
+            </a>
+          </li>
+          <li>
+            <a href="Sell.html">
+              <i class="fa fa-shopping-bag" aria-hidden="true"></i
+              ><span>Sell</span>
+            </a>
+          </li>
+          <li>
+            <a href="#">
+              <i class="fa fa-credit-card-alt" aria-hidden="true"></i
+              ><span>Orders</span>
+            </a>
+          </li>
+          <li>
+            <a href="#">
+              <i class="fa fa-map-marker" aria-hidden="true"></i
+              ><span>Track</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <h1>Inventory</h1>
+
+
         <a href="/add-product">Add Product</a>
     </h2>
 
     <!-- Filter Section -->
-    <label for="nameFilter">Name:</label>
-    <select id="nameFilter" onchange="filterTable()">
-        <option value="">All</option>
-    </select>
+    <div class="container">
+      <!-- Filter Section -->
+      <div class="filter-container">
+        <label for="nameFilter">Name:</label>
+        <select id="nameFilter" onchange="filterTable()">
+          <option value="">All</option>
+        </select>
 
-    <label for="categoryFilter">Category:</label>
-    <select id="categoryFilter" onchange="filterTable()">
-        <option value="">All</option>
-    </select>
+        <label for="categoryFilter">Category:</label>
+        <select id="categoryFilter" onchange="filterTable()">
+          <option value="">All</option>
+        </select>
 
-    <label for="supplierFilter">Supplier:</label>
-    <select id="supplierFilter" onchange="filterTable()">
-        <option value="">All</option>
-    </select>
+        <label for="supplierFilter">Supplier:</label>
+        <select id="supplierFilter" onchange="filterTable()">
+          <option value="">All</option>
+        </select>
 
-    <label for="statusFilter">Status:</label>
-    <select id="statusFilter" onchange="filterTable()">
-        <option value="">All</option>
-    </select>
+        <label for="statusFilter">Status:</label>
+        <select id="statusFilter" onchange="filterTable()">
+          <option value="">All</option>
+        </select>
+        <div class="add">
+          <h2>
+            <i class="fas fa-plus"></i>
+            <a href="/add-product">Add Product</a>
+          </h2>
+        </div>
 
-    <button onclick="resetFilters()">Reset</button>
+        <button onclick="resetFilters()">Reset</button>
+      </div>
+    </div>
 
-    <table border="2" id="productTable">
+    <table border="2" id="productTable" class="blank-table">
         <thead>
             <tr>
                 <th class="sortable" onclick="sortTable(0)">Name</th>
@@ -85,15 +118,19 @@
                     <td><%= product.description %></td>
                     <td><%= product.prodId %></td>
                     <td>
-                        <form action="/delete-Product" method="POST" style="display: inline;">
-                            <input type="hidden" name="prodId" value="<%= product.prodId %>">
-                            <button type="submit">Delete</button>
+                        <form action="/delete-Product" method="POST" style="display: inline" >
+                          <input type="hidden" name="prodId" value="<%= product.prodId %>"/>
+                          <button type="submit" class="delete-button">
+                            <i class="fa fa-trash" aria-hidden="true"></i>
+                          </button>
                         </form>
-                        <form action="/edit-Product" method="POST" style="display: inline;">
-                            <input type="hidden" name="prodId" value="<%= product.prodId %>">
-                            <button type="submit">Edit</button>
+                        <form action="/edit-Product" method="POST" style="display: inline">
+                          <input type="hidden" name="prodId" value="<%= product.prodId %>" />
+                          <button type="submit" class="edit-button">
+                            <i class="fa fa-pencil" aria-hidden="true"></i>
+                          </button>
                         </form>
-                    </td>
+                      </td>
                 </tr>
             <% }) %>
         </tbody>
